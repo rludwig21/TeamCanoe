@@ -1,0 +1,307 @@
+package RequestLogger;
+
+import java.sql.Time;
+import java.text.DateFormat;
+import java.text.Format;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
+import org.simpleframework.xml.*;
+
+/**
+ * This class is used as storing an entire log. Acts as an independent log object.
+ * 
+ * @author Robert Lee, Andrew Ludwig, Sean Wagner, Oliver Leland
+ *
+ */
+@Root
+public class Log implements Comparable {
+	
+	/**
+	 * The constructor for the class.
+	 */
+	public Log() {
+		id = nextLogId;
+		nextLogId++;
+		Date newDate = new Date();
+		setDate(newDate);
+		//add methods to error correct? we need exceptions
+	}
+	
+	
+	
+	/**
+	 * for incrementing log id numbers.
+	 */
+	private static int nextLogId = 1;
+	
+	/**
+	 * The date for the log currently being processed.
+	 */
+	@Element
+	private Date date;
+	
+	/**
+	 * The id for the log, used as a unique identifier for storing on server.
+	 */
+	@Attribute
+	private int id;
+	
+	public void setId(int id) {
+		this.id = id;
+	}
+
+
+
+	/**
+	 * The office for the log currently being processed.
+	 */
+	@Element
+	private String office;
+	
+	/**
+	 * The deadline for the log currently being processed.
+	 */
+	@Element
+	private String deadline;
+	
+	/**
+	 * The original request for the log currently being processed.
+	 */
+	@Element
+	private String origReq;
+	
+	/**
+	 * What is actually needed for the log currently being processed.
+	 */
+	@Element
+	private String needed;
+	
+	/**
+	 * The solution for the log currently being processed.
+	 */
+	@Element
+	private String solution;
+	
+	/**
+	 * The database for the log currently being processed.
+	 */
+	@Element
+	private String database;
+	
+	/**
+	 * The time required to complete the log currently being processed.
+	 */
+	@Element
+	private String timeReq;
+	
+	/**
+	 * The status of the log currently being processed.
+	 */
+	@Element
+	private String status;
+
+	/**
+	 * getter for date
+	 * @return
+	 */
+	public Date getDate() {
+		return date;
+	}
+
+	/**
+	 * setter for date
+	 * @param dateIn
+	 */
+	public void setDate(Date dateIn) {
+		//create a date object from string input
+
+		//newDate.setMonth(date.substring(0, 2));
+		this.date = dateIn;
+	}
+
+	/**
+	 * getter for deadline
+	 * @return
+	 */
+	public String getDeadline() {
+		return deadline;
+	}
+
+	/**
+	 * setter for deadline
+	 * @param deadline
+	 */
+	public void setDeadline(String deadline) {
+		this.deadline = deadline;
+	}
+
+	/**
+	 * getter for original request
+	 * @return
+	 */
+	public String getOrigReq() {
+		if(origReq==null) {
+			return " ";
+		}
+		return origReq;
+	}
+
+	/**
+	 * setter for original request
+	 * @param origReq
+	 */
+	public void setOrigReq(String origReq) {
+		this.origReq = origReq;
+	}
+
+	/**
+	 * getter for what is needed
+	 * @return
+	 */
+	public String getNeeded() {
+		if(needed==null) {
+			return " ";
+		}
+		return needed;
+	}
+
+	/**
+	 * setter for what is needed
+	 * @param needed
+	 */
+	public void setNeeded(String needed) {
+		this.needed = needed;
+	}
+
+	/**
+	 * getter for the solution
+	 * @return
+	 */
+	public String getSolution() {
+		if(solution==null) {
+			return " ";
+		}
+		return solution;
+	}
+
+	/**
+	 * setter for the solution
+	 * @param solution
+	 */
+	public void setSolution(String solution) {
+		this.solution = solution;
+	}
+
+	/**
+	 * getter for the database
+	 * @return
+	 */
+	public String getDatabase() {
+		return database;
+	}
+
+	/**
+	 * setter for the database
+	 * @param database
+	 */
+	public void setDatabase(String database) {
+		this.database = database;
+	}
+
+	/**
+	 * getter for the time required
+	 * @return
+	 */
+	public String getTimeReq() {
+		return timeReq;
+	}
+
+	/**
+	 * setter for the time required
+	 * @param timeReq
+	 */
+	public void setTimeReq(String timeReq) {
+		this.timeReq = timeReq;
+	}
+
+	/**
+	 * getter for the status
+	 * @return
+	 */
+	public String getStatus() {
+		return status;
+	}
+
+	/**
+	 * setter for the status
+	 * @param status
+	 */
+	public void setStatus(String status) {
+		this.status = status;
+	}
+	
+	/**
+	 * getter for the office
+	 * @return
+	 */
+	public String getOffice() {
+		return office;
+	}
+
+	/**
+	 * setter for the office
+	 * @param status
+	 */
+	public void setOffice(String office) {
+		this.office = office;
+	}
+
+	/**
+	 * the getter for the log's id
+	 * @return
+	 */
+	public int getId() {
+		return id;
+	}
+	
+	public String getFileName() {
+		
+		//sets date to be in the form of yyyymmdd
+		Format newF = new SimpleDateFormat("yyyyMMdd");
+		if(date==null) { // safety check for date
+			date = new Date();
+		}
+		String retVal = newF.format(date);
+		
+		//cast on the unique identifier
+		retVal += "_" + Integer.toString(id);
+				
+		return retVal;
+	}
+	
+	public static void setNextLogId(int i) {
+		nextLogId = i;
+	}
+
+	@Override
+	public int compareTo(Object o) {
+		Log l = (Log)o;
+		if(this.status.equals("Incomplete")&&l.getStatus().equals("Complete")) {
+			return -1;
+		}
+		else if(this.status.equals("Complete")&&l.getStatus().equals("Incomplete")) {
+			return 1;
+		}
+		int one = this.getId();
+		int two = l.getId();
+		if(one<two) {
+			return -1;
+		}
+		else if (two<one) {
+			return 1;
+		}
+		return 0;
+	}
+	
+}

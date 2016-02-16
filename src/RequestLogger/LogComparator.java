@@ -1,0 +1,26 @@
+package RequestLogger;
+
+import java.util.Comparator;
+
+public class LogComparator implements Comparator<Log> {
+	
+	public int compare(Log o1, Log o2) {
+		if(o1.getStatus().equals("Incomplete")&&o2.getStatus().equals("Complete")) {
+			return -1;
+		}
+		else if(o1.getStatus().equals("Complete")&&o2.getStatus().equals("Incomplete")) {
+			return 1;
+		}
+		int one = o1.getId();
+		int two = o2.getId();
+		if(one<two) {
+			return -1;
+		}
+		else if (two<one) {
+			return 1;
+		}
+		return 0;
+
+	}
+
+}

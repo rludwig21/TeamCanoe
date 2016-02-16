@@ -1,0 +1,23 @@
+As a user, I would like to be able to enter all of my data for a log, press the submit button, and see that it has updated successfully. 
+
+As a user, I would like to be able to click on a log and have it fill the fields with the logs information, so I do not have to re-type it.
+Once finished editing the log, I would like to be able to update the log or be given the option to not save my changes. 
+
+As Professor Hertz, I would like to be able to open the pop-out tray, select a log, and close the pop-out tray all from the keyboard.
+
+As a user, I would like the text fields to be an appropriate size, depending at what stage the log is currently in (original request large at first,
+smaller when editing).
+
+As a user, I would like to be able to clear all the fields that are currently filled, in case I want to start a new log. 
+
+As a user, I would like to be able to limit the number of logs shown via searching by date, client, etc.
+
+As a user, I would like to be able to select a database from a dropdown list that does not change.
+ 
+As a user, I would like the date and time fields to pre-populate when logging a new request, but allow me to change them should I desire.
+ 
+As a user, I would like the "Time Required" box to automatically select certain ranges of dates for me based on logical workdays.
+ 
+As a user, I would like my list of entered logs to be visible in the tray and easily sorted by color so I can quickly identify the log I want.
+
+As a user, I want to be prompted before a draft is overwritten by a previously existing log selected from the tray.

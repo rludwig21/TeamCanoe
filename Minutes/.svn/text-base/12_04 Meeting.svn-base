@@ -1,0 +1,26 @@
+Meeting held on 12/4/2014 at 9:00a.m.
+Attendence: Sean, Rob, Oliver
+excused: Andrew-met up at 1000am
+
+ACTION ITEMS DUE:
+Begin Development
+
+Minutes:
+-talked about development.
+-decided to add a settings cog with a popup
+	this allows the user to add/remove a database or a office.
+	this will need to have a XML settup file then!
+
+NEW ACTION ITEMS:
+-Work on Development
+-Andrew -Create Settings GUI class follow up with rob work on touch ups and tabbing through GUI
+-Rob -GUI with andrew 
+-Sean- XML and DAtabase transactions 
+	 -also set up the setup config XML
+-Oliver- Other classes and work with Sean
+
+Plan on having a meeting on Monday for sure before or after Burhans exam
+
+We NEED to MEET W/ HERTz for a private presentation when we feel its complete
+
+also add a scrollbar to trayGUI

@@ -1,0 +1,18 @@
+Meeting held on 11/13/2014 at 9:00a.m.
+Librarian: Andrew Ludwig
+Attendence: Rob, Andrew, Oliver, 
+Sean- excused absence death in family
+
+ACTION ITEMS DUE:
+Junit tests
+tests based on user stories
+
+Minutes:
+-reviewed Robs junit testing for the GUI
+-fixed up any confusion on testing or how to write junits
+-plan on meeting in lab and after AI to finish any extra things
+-filled in checkComplete method
+-added setToError method for checkComplete
+NEW ACTION ITEMS:
+-finish outside of lab the paper screen shots
+-finish test case writing

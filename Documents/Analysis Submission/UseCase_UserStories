@@ -1,0 +1,32 @@
+Authors: Andrew Ludwig, Rob Lee, Sean Wagner, Oliver Leland
+
+Use Case:
+-Goal: Allow the office to create a log for a request and store it into a server.
+-Preconditions: None
+-Postconditions: -log stored successfully
+-all info about request save/stored
+-See other sheet for graphic
+
+1)	Start the program
+2)	Enter all info into fields (date and time auto-updates? Some other fields auto-fill)
+	2.1) 	Request an already completed log						2.1.1) Return from failed save to filled fields
+	2.2) 	Search for a completed log by client/date/etc.
+	2.3) 	Return to step 2
+3)	Click save button
+4)	System saves log
+	4.1)	Log not properly saved…error message displayed
+	4.2)	Return to 2.1.1 
+5)	End of use case
+
+
+User Stories:
+-As a user, I would like to punch in tickets on one screen for efficiency and easiness.
+-As a user, I would like to be able to use tab to switch to different fields and enter to continue.
+-As a user, I would like to be able to easily navigate screens with just one click.
+-As a user, I would like to quickly log information about requests to ORIE.
+-As Professor Hertz, I absolutely hate MS Outlook and would not want a GUI to look like it ever in my life.
+-As a user, authentication is unnecessary. 
+-As a user, I would like to work on a request that someone else is working on without conflict.
+-As a user, I want my program to be easily integrated with my other applications.
+-As a user, I would like to be able to easily change the GUI if I hate it.
+-As a user, I would like a help/help screens in case I need them. 

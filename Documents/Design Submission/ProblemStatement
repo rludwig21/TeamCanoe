@@ -1,0 +1,6 @@
+Authors: Andrew Ludwig, Robert Lee, Sean Wagner, Oliver Leland
+
+II. Problem statement 
+	The goal of this project is to allow users of the program to enter requests in the form of a log and store them into a server easily and efficiently. 
+	The program will also allow for editing and reviewing of previously created logs. It is designed to show the progress of different logs and allow for
+	reporting of work completed by ORIE.

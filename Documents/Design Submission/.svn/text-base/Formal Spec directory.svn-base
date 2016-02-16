@@ -1,0 +1,7 @@
+Directory:
+../
+
+// Because or program is doing all the grunt work of differentiating the logs (in terms of 
+// date and time, office, request etc.), there is no reason to complicate the directory in
+// which they're being stored. The entire database is being loaded into our data structure
+// when the program initializes, and it will pull the XML files from the main directory.

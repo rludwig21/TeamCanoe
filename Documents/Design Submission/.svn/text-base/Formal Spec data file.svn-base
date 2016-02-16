@@ -1,0 +1,16 @@
+example log.xml
+
+<log>
+	<date>10-30-14</date>
+	<time>14:48:07</time>
+	<office>President's Office</office>
+	<deadline>2</deadline>
+	<request>List of honor's students</request>
+	<needed>N/A</needed>
+	<solution>Compile list and send to president</solution>
+	<database>1</database>
+	<time required>3</time required>
+	<status>2</status>
+</log>
+
+// deadline, database, time required and status are ints as they are drop down selections

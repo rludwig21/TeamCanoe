@@ -1,0 +1,1642 @@
+package GUI;
+
+import java.awt.event.*;
+
+import javax.swing.*;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
+
+import org.eclipse.wb.swing.FocusTraversalOnArray;
+
+import java.util.List;
+import RequestLogger.*;
+import java.awt.*;
+import java.io.IOException;
+import java.text.ParseException;
+import java.util.*;
+import java.awt.Desktop;
+import java.net.URI;
+import java.net.URISyntaxException;
+
+/**
+ * This is the class for the opening GUI of the program.
+ * 
+ * @author Robert Lee, Andrew Ludwig, Sean Wagner, Oliver Leland
+ * 
+ */
+@SuppressWarnings("serial")
+public class MainGUI extends JFrame implements ActionListener, MouseListener, FocusListener {
+
+	/**
+	 * The dlm allows for the JList to populate its fields with different logs
+	 */
+	DefaultListModel<String> dlm = new DefaultListModel<String>();
+
+	/**
+	 * ALL THE MAINGUI FRAME FEATURES INSTANTIATED HERE The button used to
+	 * submit the log
+	 */
+	private JButton submit;
+
+	private Log prefillLog;
+
+	/**
+	 * The button used to open the pop-out tray
+	 */
+	private JButton openTray;
+
+	/**
+	 * The button used to close the pop-out tray
+	 */
+	private JButton closeTray;
+
+	/**
+	 * The button used to clear all fields if the user is done accessing a log
+	 * or would like to start a new log.
+	 */
+	private JButton clear;
+
+	/**
+	 * The office that the request is coming from
+	 */
+	private JComboBox<String> office;
+	private String[] officeStrings = null;
+	private JTextArea officeTextArea;
+	private JLabel officeLabelText;
+
+	/**
+	 * The deadline for when the request should be completed - entered OR
+	 * selected
+	 */
+	private JComboBox<String> deadline;
+	private String[] deadlineStrings = { "Deadline", "Immediate", "One Day",
+			"One Week", "Two Weeks", "One Month", "More than one Month" };
+
+	/**
+	 * The status of the log - complete or incomplete
+	 */
+	private JComboBox<String> status;
+	private String[] statusStrings = { "Status", "Complete", "Incomplete" };
+
+	/**
+	 * The time required to complete the request - entered OR selected
+	 */
+	private JComboBox<String> timeReq;
+	private String[] timeReqStrings = { "Deadline", "Immediate", "One Day",
+			"One Week", "Two Weeks", "One Month", "More than one Month" };
+
+	/**
+	 * The database that the log will be saved into - selection ONLY
+	 */
+	private JComboBox<String> database;
+	private String[] databaseStrings = new String[5];
+
+	/**
+	 * The date when the log is submitted - pre-filled field
+	 */
+	private JFormattedTextField date;
+	Date today = new Date();
+
+	/**
+	 * the main frame
+	 */
+	private JFrame main;
+
+	/**
+	 * head label of the frame
+	 */
+	private JLabel heading;
+
+	/**
+	 * original request label
+	 */
+	private JLabel origRequestLabel;
+
+	/**
+	 * what is needed label
+	 */
+	private JLabel neededLabel;
+
+	/**
+	 * solution label
+	 */
+	private JLabel solutionLabel;
+
+	/**
+	 * error label
+	 */
+	private JLabel errorLabel;
+
+	/**
+	 * What is actually needed for the request
+	 */
+	private JTextArea needed;
+
+	/**
+	 * The original request from the office
+	 */
+	private JTextArea origReq;
+
+	/**
+	 * The solution of how the request will be completed entered as a
+	 * description
+	 */
+	private JTextArea solution;
+	/**
+	 * Image for the upper left icon.
+	 */
+	private ImageIcon imgIcon = new ImageIcon(
+			"/TeamCanoe/src/GUI/canisiusicon.jpg");
+
+	/**
+	 * -----------------------TRAYGUI FIELDS-----------------------
+	 * 
+	 * 
+	 * A list of all of the logs that have been submitted successfully
+	 */
+	public JList<String> logs;
+
+	/**
+	 * The listener for the JList of logs
+	 */
+	ListSelectionListener listListener = new ListSelectionListener() {
+		@Override
+		public void valueChanged(ListSelectionEvent e) {
+			try {
+				// if something is selected in the list of logs...
+				if (!e.getValueIsAdjusting()) {
+					// call checkDraft
+					boolean prefilling = checkDraft();
+					// if checkDraft returns true...
+					if (prefilling == true) {
+						// prefill the fields
+						doPrefill();
+					}
+				}
+			} catch (IOException e1) {
+				e1.printStackTrace();
+			}
+		}
+	};
+
+	/**
+	 * A comboBox that allows you to sort by date, client, etc
+	 */
+	private JComboBox<String> sortOption;
+	private String[] sortOptionStrings = { "Sort by", "Office",
+			"Date (YYYYMMDD)", "Status" };
+
+	/**
+	 * refine search with this field
+	 */
+	private JTextArea refine;
+
+	/**
+	 * The search button for <sortOption> and <refine>. Searches for logs based
+	 * on the search fields.
+	 */
+	private JButton search;
+
+	/**
+	 * error label
+	 */
+	private JLabel error2Label;
+
+	/**
+	 * error button that pushes log into fields
+	 */
+	private JButton errorYes;
+
+	/**
+	 * error button that cancels the pre-fill
+	 */
+	private JButton errorCancel;
+	/**
+	 * settings button for the office (could be expanded to add in other
+	 * combobox feilds later too)
+	 */
+	private JButton settingsCog;
+	private JButton refreshCog;
+	private LinkedList<Integer> konami = new LinkedList<Integer>();
+
+	final ArrayList<JTextArea> textFields = new ArrayList<JTextArea>();
+	KeyListener kl = new KeyListener() {
+
+		@Override
+		public void keyPressed(KeyEvent e) {
+			// Set of currently pressed keys
+			konami.add(e.getKeyCode());
+			if (konami.size() == 11) {
+				for (int i = 0; i < 1; i++) {
+					int test1 = konami.remove();
+					if (test1 == KeyEvent.VK_UP) {
+						int test2 = konami.remove();
+						if (test2 == KeyEvent.VK_UP) {
+							int test4 = konami.remove();
+							if (test4 == KeyEvent.VK_DOWN) {
+								int test3 = konami.remove();
+								if (test3 == KeyEvent.VK_DOWN) {
+									int test5 = konami.remove();
+									if (test5 == KeyEvent.VK_LEFT) {
+										int test6 = konami.remove();
+										if (test6 == KeyEvent.VK_RIGHT) {
+											int test7 = konami.remove();
+											if (test7 == KeyEvent.VK_LEFT) {
+												int test8 = konami.remove();
+												if (test8 == KeyEvent.VK_RIGHT) {
+													int test9 = konami.remove();
+													if (test9 == KeyEvent.VK_B) {
+														int test10 = konami
+																.remove();
+														if (test10 == KeyEvent.VK_A) {
+															int test11 = konami
+																	.remove();
+															if (test11 == KeyEvent.VK_ENTER) {
+																String url = "https://www.youtube.com/watch?v=BROWqjuTM0g";
+																if (Desktop
+																		.isDesktopSupported()) {
+																	Desktop desktop = Desktop
+																			.getDesktop();
+																	try {
+																		desktop.browse(new URI(
+																				url));
+																	} catch (
+																			IOException
+																			| URISyntaxException e1) {
+																		// TODO
+																		// Auto-generated
+																		// catch
+																		// block
+																		e1.printStackTrace();
+																	}
+																} else {
+																	Runtime runtime = Runtime
+																			.getRuntime();
+																	try {
+																		runtime.exec("xdg-open "
+																				+ url);
+																	} catch (IOException e1) {
+																		e1.printStackTrace();
+																	}
+																}
+															}
+														}
+													}
+												}
+											}
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+			// tab key with officeTextArea
+			if ((e.getKeyCode() == KeyEvent.VK_TAB)
+					&& officeTextArea.isFocusOwner()) {
+				officeTextArea.transferFocus();
+				e.consume();
+			}
+			// tab pressed in the orginal request text area
+			if (e.getKeyCode() == KeyEvent.VK_TAB && origReq.isFocusOwner()) {
+
+				if (e.getModifiers() > 0)
+					origReq.transferFocusBackward();
+				else
+					origReq.transferFocus();
+				e.consume();
+			}
+			// tab pressed in the original request text area
+			if (e.getKeyCode() == KeyEvent.VK_TAB && origReq.isFocusOwner()) {
+
+				if (e.getModifiers() > 0)
+					origReq.transferFocusBackward();
+				else
+					origReq.transferFocus();
+				e.consume();
+			}
+			// tab pressed in the needed request text area
+			if (e.getKeyCode() == KeyEvent.VK_TAB && needed.isFocusOwner()) {
+
+				if (e.getModifiers() > 0)
+					needed.transferFocusBackward();
+				else
+					needed.transferFocus();
+				e.consume();
+			}
+			// tab pressed in the solution request text area
+			if (e.getKeyCode() == KeyEvent.VK_TAB && solution.isFocusOwner()) {
+
+				if (e.getModifiers() > 0)
+					solution.transferFocusBackward();
+				else
+					solution.transferFocus();
+				e.consume();
+			}
+			// tab pressed in the refine field
+			if (e.getKeyCode() == KeyEvent.VK_TAB && refine.isFocusOwner()) {
+
+				if (e.getModifiers() > 0)
+					refine.transferFocusBackward();
+				else
+					refine.transferFocus();
+				e.consume();
+			}
+			// tab pressed in the sortOption combo box
+			if (e.getKeyCode() == KeyEvent.VK_TAB && sortOption.isFocusOwner()) {
+
+				refine.setText("");
+				if (e.getModifiers() > 0) {
+					refine.setText("");
+					sortOption.transferFocusBackward();
+				} else {
+					refine.setText("");
+					sortOption.transferFocus();
+				}
+				e.consume();
+			}
+			// enter key with submit
+			if ((e.getKeyCode() == KeyEvent.VK_ENTER) && submit.isFocusOwner()) {
+				submitLog();
+				doNotPrefill();
+				// set office to tabbing focus
+				office.requestFocusInWindow();
+				e.consume();
+			}
+			// enter key with clear
+			if ((e.getKeyCode() == KeyEvent.VK_ENTER) && clear.isFocusOwner()) {
+				clear();
+				office.requestFocusInWindow();
+				e.consume();
+			}
+			// enter key with openTray
+			if ((e.getKeyCode() == KeyEvent.VK_ENTER)
+					&& openTray.isFocusOwner()) {
+				toggleTrayOpen();
+				e.consume();
+			}
+			// enter key with closeTray
+			if ((e.getKeyCode() == KeyEvent.VK_ENTER)
+					&& closeTray.isFocusOwner()) {
+				toggleTrayClosed();
+				e.consume();
+			}
+			// enter key with sortOption
+			if ((e.getKeyCode() == KeyEvent.VK_ENTER)
+					&& refine.isFocusOwner()) {
+				Search siri = new Search();
+				if (refine.getText().equals("")
+						|| refine.getText().equals("Refine:")) {
+					return;
+				} else {
+					try {
+						siri.search(sortOption.getSelectedItem().toString(),
+								refine.getText());
+					} catch (ParseException e1) {
+						e1.printStackTrace();
+					}
+				}
+				e.consume();
+			}
+			// escape key with officeTextArea
+			if ((e.getKeyCode() == KeyEvent.VK_ESCAPE)
+					&& officeTextArea.isFocusOwner()) {
+				officeTextArea.setText("");
+				officeTextArea.setVisible(false);
+				officeLabelText.setVisible(false);
+				office.setVisible(true);
+				e.consume();
+			}
+
+		}
+
+		@Override
+		public void keyReleased(KeyEvent e) {
+			// negligible
+		}
+
+		@Override
+		public void keyTyped(KeyEvent e) {
+			// negligible
+		}
+	};
+
+	/**
+	 * Constructor of the frame
+	 * 
+	 * @throws IOException
+	 */
+	public MainGUI() throws IOException {
+
+		prefillLog = null;
+		main = new JFrame("ELSA"); // Extreme Log Storing Application!
+		main.setForeground(new Color(237, 178, 45));
+		main.getContentPane().setBackground(new Color(2, 34, 67));
+		main.getContentPane().setLayout(null);
+		main.setDefaultCloseOperation(EXIT_ON_CLOSE);
+		main.addKeyListener(kl);
+		main.setIconImage(imgIcon.getImage());
+
+		heading = new JLabel("Enter Log information below.");
+		heading.setBounds(10, 11, 314, 25);
+		heading.setFont(new Font("Times New Roman", Font.PLAIN, 16));
+		heading.setForeground(Color.WHITE);
+		main.getContentPane().add(heading);
+		heading.addKeyListener(kl);
+
+		date = new JFormattedTextField(today);
+		date.setBounds(10, 47, 147, 20);
+		date.setEditable(false);
+		main.getContentPane().add(date);
+
+		officeTextArea = new JTextArea();
+		officeTextArea.setText("");
+		officeTextArea.setBounds(99, 78, 225, 20);
+		officeTextArea.setVisible(false);
+		main.getContentPane().add(officeTextArea);
+		officeTextArea.addKeyListener(kl);
+
+		setOfficeStrings();
+		// office = new JComboBox(officeStrings);
+		// office.setBounds(10, 78, 314, 20);
+		// office.addActionListener(new ActionListener() {
+		// @Override
+		// public void actionPerformed(ActionEvent e) {
+		// if (office.getSelectedItem().toString().equals("Other")) {
+		// //makes other office fields appear when other is selected in the
+		// comboBox
+		// office.setVisible(false);
+		// officeTextArea.setVisible(true);
+		// officeLabelText.setVisible(true);
+		// }
+		// }
+		//
+		// });
+		main.getContentPane().add(office);
+
+		deadline = new JComboBox<String>(deadlineStrings);
+		deadline.setBounds(10, 109, 314, 20);
+		main.getContentPane().add(deadline);
+
+		timeReq = new JComboBox<String>(timeReqStrings);
+		timeReq.setBounds(10, 140, 314, 20);
+		main.getContentPane().add(timeReq);
+
+		// Orginal request
+		origRequestLabel = new JLabel("Original Request:");
+		origRequestLabel.setForeground(Color.WHITE);
+		origRequestLabel.setBounds(10, 171, 364, 14);
+		main.getContentPane().add(origRequestLabel);
+
+		origReq = new JTextArea();
+		origReq.setLineWrap(true);
+		origReq.setFocusTraversalKeysEnabled(false);
+		origReq.addKeyListener(kl);
+		main.getContentPane().add(origReq);
+		JScrollPane scrollReq = new JScrollPane(origReq,
+				ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED,
+				ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+		scrollReq.setBounds(10, 196, 314, 150);
+		main.getContentPane().add(scrollReq);
+
+		neededLabel = new JLabel("What is needed:");
+		neededLabel.setForeground(Color.WHITE);
+		neededLabel.setBounds(10, 357, 314, 14);
+		main.getContentPane().add(neededLabel);
+
+		// Tray Open Button
+		openTray = new JButton("<html>&#8594; </html>");
+		openTray.setBounds(334, 0, 50, 747);
+		main.getContentPane().add(openTray);
+		openTray.addActionListener(this);
+		openTray.addKeyListener(kl);
+
+		// needed textarea
+		needed = new JTextArea();
+		needed.setLineWrap(true);
+		needed.addKeyListener(kl);
+		main.getContentPane().add(needed);
+		JScrollPane scrollNeeded = new JScrollPane(needed,
+				ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED,
+				ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+		scrollNeeded.setBounds(10, 382, 314, 75);
+		main.getContentPane().add(scrollNeeded);
+
+		solutionLabel = new JLabel("Solution:");
+		solutionLabel.setForeground(Color.WHITE);
+		solutionLabel.setBounds(10, 468, 314, 14);
+		main.getContentPane().add(solutionLabel);
+
+		solution = new JTextArea();
+		solution.setLineWrap(true);
+		solution.addKeyListener(kl);
+		main.getContentPane().add(solution);
+		JScrollPane scrollSolution = new JScrollPane(solution,
+				ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED,
+				ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+		scrollSolution.setBounds(10, 493, 314, 75);
+		main.getContentPane().add(scrollSolution);
+
+		setDBStrings();
+		database = new JComboBox<String>(databaseStrings);
+		database.setBounds(10, 579, 314, 20);
+		main.getContentPane().add(database);
+
+		status = new JComboBox<String>(statusStrings);
+		status.setBounds(10, 610, 314, 20);
+		main.getContentPane().add(status);
+
+		clear = new JButton("Clear");
+		clear.setBounds(10, 689, 147, 50);
+		main.getContentPane().add(clear);
+		clear.addKeyListener(kl);
+		clear.addActionListener(this);
+
+		submit = new JButton("Submit");
+		submit.setBackground(new Color(239, 178, 45));
+		submit.setForeground(Color.BLACK);
+		submit.setBounds(167, 689, 157, 50);
+		main.getContentPane().add(submit);
+		submit.addKeyListener(kl);
+		submit.addActionListener(this);
+
+		errorLabel = new JLabel("Error: Please enter in fields that are red.");
+		errorLabel.setBounds(10, 652, 314, 14);
+		errorLabel.setForeground(Color.RED);
+		errorLabel.setVisible(false);
+		main.getContentPane().add(errorLabel);
+
+		closeTray = new JButton("<html>&#8592; </html>");
+		closeTray.setBounds(334, 0, 50, 747);
+		main.getContentPane().add(closeTray);
+		closeTray.setEnabled(false);
+		closeTray.addActionListener(this);
+		closeTray.addKeyListener(kl);
+
+		/**
+		 * TRAYGUI CREATIONS
+		 */
+
+		sortOption = new JComboBox<String>(sortOptionStrings);
+		sortOption.setBounds(394, 15, 147, 20);
+		main.getContentPane().add(sortOption);
+
+		// settings Cog button
+		settingsCog = new JButton();
+		settingsCog.setIcon(new ImageIcon(MainGUI.class
+				.getResource("/GUI/settings.jpg")));
+		settingsCog.setBorderPainted(false);
+		settingsCog.setBackground(new Color(2, 34, 67));
+		settingsCog.setBounds(658, 638, 40, 40);
+		settingsCog.addActionListener(this);
+		settingsCog.setVisible(true);
+		main.getContentPane().add(settingsCog);
+
+		// refresh Cog Button
+
+		refreshCog = new JButton();
+		refreshCog.setIcon(new ImageIcon(MainGUI.class
+				.getResource("/GUI/refresh.png")));
+		refreshCog.setBorderPainted(false);
+		refreshCog.setBackground(new Color(2, 34, 67));
+		refreshCog.setBounds(618, 638, 40, 40);
+		refreshCog.addActionListener(this);
+		refreshCog.setVisible(true);
+		main.getContentPane().add(refreshCog);
+
+		refine = new JTextArea();
+		refine.setText("Refine:");
+		refine.setBounds(551, 13, 147, 22);
+		main.getContentPane().add(refine);
+		refine.addMouseListener(this);
+		refine.addKeyListener(kl);
+		refine.addFocusListener(this);
+
+		search = new JButton("Search");
+		search.setBounds(394, 46, 304, 23);
+		search.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent eins) {
+				Search neu = new Search();
+				if (refine.getText().equals("")
+						|| refine.getText().equals("Refine:")) {
+					return;
+				} else {
+					String ohne = refine.getText();
+					try {
+						neu.search(sortOption.getSelectedItem().toString(),
+								ohne);
+					} catch (ParseException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				}
+			}
+		});
+		main.getContentPane().add(search);
+
+		// previous list of logs
+		logs = new JList<String>(dlm);
+		logs.setValueIsAdjusting(true);
+		logs.setBounds(394, 78, 304, 552);
+		logs.addListSelectionListener(listListener);
+		main.getContentPane().add(logs);
+
+		// scrollbar for logs Jlist
+		JScrollPane scrollLog = new JScrollPane(logs,
+				ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS,
+				ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+		scrollLog.setSize(304, 552);
+		scrollLog.setLocation(394, 78);
+		main.getContentPane().add(scrollLog);
+
+		// error label
+		error2Label = new JLabel("Erase filled fields?");
+		error2Label.setForeground(Color.RED);
+		error2Label.setBounds(395, 652, 314, 14);
+		error2Label.setVisible(false);
+		main.getContentPane().add(error2Label);
+
+		errorYes = new JButton("Yes");
+		errorYes.setBackground(new Color(239, 178, 45));
+		errorYes.setBounds(551, 689, 147, 50);
+		errorYes.setEnabled(false);
+		errorYes.addActionListener(this);
+		main.getContentPane().add(errorYes);
+
+		errorCancel = new JButton("Cancel");
+		errorCancel.setBounds(394, 689, 147, 50);
+		errorCancel.setEnabled(false);
+		errorCancel.addActionListener(this);
+		main.getContentPane().add(errorCancel);
+
+		/**
+		 * Main frame size and visibility
+		 */
+
+		main.setSize(390, 775);
+		main.setVisible(true);
+		main.setResizable(false);
+
+		/**
+		 * Canisius logo placement and frame stuff
+		 */
+		JLabel canisiusPicture = new JLabel(new ImageIcon(
+				MainGUI.class.getResource("/GUI/canisius.jpg")));
+		canisiusPicture.setSize(125, 67);
+		canisiusPicture.setLocation(196, 5);
+		main.getContentPane().add(canisiusPicture);
+
+		officeLabelText = new JLabel("Office:");
+		officeLabelText.setBounds(10, 78, 79, 19);
+		officeLabelText.setForeground(Color.WHITE);
+		officeLabelText.setVisible(false);
+		main.getContentPane().add(officeLabelText);
+		main.setFocusTraversalPolicy(new FocusTraversalOnArray(new Component[] {
+				office, officeTextArea, deadline, timeReq, origReq, needed,
+				solution, database, status, submit, openTray, sortOption,
+				refine, search, logs, errorYes, errorCancel }));
+
+	}
+
+	/**
+	 * getter for date
+	 * 
+	 * @return
+	 */
+	public JFormattedTextField getDate() {
+		return date;
+	}
+
+	/**
+	 * setter for date
+	 * 
+	 * @param date
+	 */
+	public void setDate(JFormattedTextField date) {
+		this.date = date;
+	}
+
+	/**
+	 * getter for office
+	 * 
+	 * @return
+	 */
+	public JComboBox<String> getOffice() {
+		return office;
+	}
+
+	/**
+	 * setter for office
+	 * 
+	 * @param office
+	 */
+	public void setOffice(JComboBox<String> office) {
+		this.office = office;
+	}
+
+	/**
+	 * getter for deadline
+	 * 
+	 * @return
+	 */
+	public JComboBox<String> getDeadline() {
+		return deadline;
+	}
+
+	/**
+	 * setter for deadline
+	 * 
+	 * @param deadline
+	 */
+	public void setDeadline(JComboBox<String> deadline) {
+		this.deadline = deadline;
+	}
+
+	/**
+	 * getter for the original request
+	 * 
+	 * @return
+	 */
+	public JTextArea getOrigReq() {
+		return origReq;
+	}
+
+	/**
+	 * setter for the original request
+	 * 
+	 * @param origReq
+	 */
+	public void setOrigReq(JTextArea origReq) {
+		this.origReq = origReq;
+	}
+
+	/**
+	 * getter for what is needed
+	 * 
+	 * @return
+	 */
+	public JTextArea getNeeded() {
+		return needed;
+	}
+
+	/**
+	 * setter for what is needed
+	 * 
+	 * @param needed
+	 */
+	public void setNeeded(JTextArea needed) {
+		this.needed = needed;
+	}
+
+	/**
+	 * getter for the solution
+	 * 
+	 * @return
+	 */
+	public JTextArea getSolution() {
+		return solution;
+	}
+
+	/**
+	 * setter for the solution
+	 * 
+	 * @param solution
+	 */
+	public void setSolution(JTextArea solution) {
+		this.solution = solution;
+	}
+
+	/**
+	 * getter for the database
+	 * 
+	 * @return
+	 */
+	public JComboBox<String> getDatabase() {
+		return database;
+	}
+
+	/**
+	 * setter for the database
+	 * 
+	 * @param database
+	 */
+	public void setDatabase(JComboBox<String> database) {
+		this.database = database;
+	}
+
+	/**
+	 * getter for the time required
+	 * 
+	 * @return
+	 */
+	public JComboBox<String> getTimeReq() {
+		return timeReq;
+	}
+
+	/**
+	 * setter for the time required
+	 * 
+	 * @param timeReq
+	 */
+	public void setTimeReq(JComboBox<String> timeReq) {
+		this.timeReq = timeReq;
+	}
+
+	/**
+	 * getter for the status
+	 * 
+	 * @return
+	 */
+	public JComboBox<String> getStatus() {
+		return status;
+	}
+
+	/**
+	 * setter for the status
+	 * 
+	 * @param status
+	 */
+	public void setStatus(JComboBox<String> status) {
+		this.status = status;
+	}
+
+	/**
+	 * getter for the original request label
+	 * 
+	 * @return
+	 */
+	public JLabel getOrigRequestLabel() {
+		return origRequestLabel;
+	}
+
+	/**
+	 * setter for the original request label
+	 * 
+	 * @param origRequestLabel
+	 */
+	public void setOrigRequestLabel(JLabel origRequestLabel) {
+		this.origRequestLabel = origRequestLabel;
+	}
+
+	/**
+	 * getter for the what is needed label
+	 * 
+	 * @return
+	 */
+	public JLabel getNeededLabel() {
+		return neededLabel;
+	}
+
+	/**
+	 * setter for the what is needed label
+	 * 
+	 * @param neededLabel
+	 */
+	public void setNeededLabel(JLabel neededLabel) {
+		this.neededLabel = neededLabel;
+	}
+
+	/**
+	 * getter for the solution label
+	 * 
+	 * @return
+	 */
+	public JLabel getSolutionLabel() {
+		return solutionLabel;
+	}
+
+	/**
+	 * setter for the solution label
+	 * 
+	 * @param solutionLabel
+	 */
+	public void setSolutionLabel(JLabel solutionLabel) {
+		this.solutionLabel = solutionLabel;
+	}
+
+	/**
+	 * getter for the list of logs
+	 * 
+	 * @return
+	 */
+	public JList<String> getLogs() {
+		return logs;
+	}
+
+	/**
+	 * setter for the list of logs
+	 * 
+	 * @param logs
+	 */
+	public void setLogs(JList<String> logs) {
+		this.logs = logs;
+	}
+
+	/**
+	 * getter for main frame
+	 * 
+	 * @return
+	 */
+	public JFrame getMain() {
+		return main;
+	}
+
+	/**
+	 * getter for the error label
+	 * 
+	 * @return
+	 */
+	public JLabel getErrorLabel() {
+		return errorLabel;
+	}
+
+	/**
+	 * setter for the error label
+	 * 
+	 * @param errorLabel
+	 */
+	public void setErrorLabel(JLabel errorLabel) {
+		this.errorLabel = errorLabel;
+	}
+
+	/**
+	 * TRAYGUI getters and setters
+	 */
+
+	/**
+	 * getter for the sorting comboBox
+	 * 
+	 * @return
+	 */
+	public JComboBox<String> getSortOption() {
+		return sortOption;
+	}
+
+	/**
+	 * setter for the search comboBox
+	 * 
+	 * @param sortOption
+	 */
+	public void setSortOption(JComboBox<String> sortOption) {
+		this.sortOption = sortOption;
+	}
+
+	/**
+	 * getter for the refine field
+	 * 
+	 * @return
+	 */
+	public JTextArea getRefine() {
+		return refine;
+	}
+
+	/**
+	 * setter for the refine field
+	 * 
+	 * @param refine
+	 */
+	public void setRefine(JTextArea refine) {
+		this.refine = refine;
+	}
+
+	/**
+	 * getter for the error label in the traygui
+	 * 
+	 * @return
+	 */
+	public JLabel getError2Label() {
+		return error2Label;
+	}
+
+	/**
+	 * setter for the error label in traygui
+	 * 
+	 * @param error2Label
+	 */
+	public void setError2Label(JLabel error2Label) {
+		this.error2Label = error2Label;
+	}
+
+	/**
+	 * getter for the errorYes button
+	 * 
+	 * @return
+	 */
+	public JButton getErrorYes() {
+		return errorYes;
+	}
+
+	/**
+	 * setter for the errorYes button
+	 * 
+	 * @param errorYes
+	 */
+	public void setErrorYes(JButton errorYes) {
+		this.errorYes = errorYes;
+	}
+
+	/**
+	 * getter for the errorCancel button
+	 * 
+	 * @return
+	 */
+	public JButton getErrorCancel() {
+		return errorCancel;
+	}
+
+	/**
+	 * setter for the errorCancel button
+	 * 
+	 * @param errorCancel
+	 */
+	public void setErrorCancel(JButton errorCancel) {
+		this.errorCancel = errorCancel;
+	}
+
+	/**
+	 * sets the databases to the ones returned from the database
+	 */
+	public void setDBStrings() {
+
+		Settings s = Settings.getSettings();
+		List<String> dbs = s.getDatabases();
+		int arrSize = dbs.size();
+		int curr = 0;
+		Iterator<String> it = dbs.listIterator();
+		String[] array = new String[arrSize];
+
+		while (it.hasNext()) {
+			String newDB = it.next();
+			array[curr] = newDB;
+			curr++;
+		}
+
+		databaseStrings = array;
+	}
+
+	/**
+	 * Sets the office strings to the ones returned from the database
+	 */
+	public void setOfficeStrings() {
+		Settings s = Settings.getSettings();
+		List<String> dbs = s.getOffices();
+		int arrSize = dbs.size();
+		int curr = 0;
+		Iterator<String> it = dbs.listIterator();
+		String[] array = new String[arrSize];
+
+		while (it.hasNext()) {
+			String newOff = it.next();
+			array[curr] = newOff;
+			curr++;
+		}
+
+		officeStrings = array;
+		office = new JComboBox<String>(officeStrings);
+		office.setBounds(10, 78, 314, 20);
+		office.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				if (office.getSelectedItem().toString().equals("Other")) {
+					// makes other office fields appear when other is selected
+					// in the comboBox
+					office.setVisible(false);
+					officeTextArea.setVisible(true);
+					officeLabelText.setVisible(true);
+				}
+			}
+
+		});
+		main.getContentPane().add(office);
+
+	}
+
+	/**
+	 * This method is used to send all of the information stored for the log
+	 * back to database transactions. It grabs all of the data, stores them into
+	 * temporary fields, and sends them to a method in database transactions.
+	 * 
+	 * CALLS METHOD CHECKCOMPLETE CAN CALL METHOD SETTOERROR
+	 * 
+	 */
+	public void submitLog() {
+
+		resetErrorLabels();
+		boolean check = checkComplete();
+
+		// dodges Log having a blank field for unrequired fields
+		if (needed.getText().equals("")) {
+			needed.setText(" ");
+		}
+		if (solution.getText().equals("")) {
+			solution.setText(" ");
+		}
+
+		// if true, send fields to main
+		// if false, set errorLabels
+		if (!check) {
+			setToError();
+		} else {
+			// need to edit here to handle updating a log
+			DatabaseTransactions db = new DatabaseTransactions();
+			try {
+				if (submit.getText().equals("Update")) {
+					logUpdate();
+					db.updateLog(prefillLog);
+					prefillLog = null;
+				} else {
+					Log newLog = logCreation();
+					db.sendToDatabase(newLog);
+				}
+				clear();
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+
+	}
+
+	public Log logUpdate() {
+		// instantiate the new log
+		Settings s = Settings.getSettings();
+		int index = database.getSelectedIndex();
+		List<String> databases = s.getDatabases();
+		prefillLog.setDatabase(databases.get(index));
+		prefillLog.setDeadline(deadline.getSelectedItem().toString());
+
+		// depending on what field for offices is selected, set the office
+		// accordingly
+		if (!office.isVisible()) {
+			prefillLog.setOffice(officeTextArea.getText());
+		} else {
+			prefillLog.setOffice(office.getSelectedItem().toString());
+		}
+
+		prefillLog.setStatus(status.getSelectedItem().toString());
+		prefillLog.setTimeReq(timeReq.getSelectedItem().toString());
+		prefillLog.setOrigReq(origReq.getText());
+		prefillLog.setNeeded(needed.getText());
+		prefillLog.setSolution(solution.getText());
+
+		// send it back to be sent to the database
+		return prefillLog;
+
+	}
+
+	/**
+	 * This method is used to reset the labels/comboBoxes to their original
+	 * color when an attempt at submitting a log is done.
+	 */
+	public void resetErrorLabels() {
+
+		office.setForeground(UIManager.getColor("ComboBox.selectionForeground"));
+		officeLabelText.setForeground(Color.WHITE);
+		timeReq.setForeground(UIManager
+				.getColor("ComboBox.selectionForeground"));
+		deadline.setForeground(UIManager
+				.getColor("ComboBox.selectionForeground"));
+		status.setForeground(UIManager.getColor("ComboBox.selectionForeground"));
+		database.setForeground(UIManager
+				.getColor("ComboBox.selectionForeground"));
+		origRequestLabel.setForeground(Color.WHITE);
+		errorLabel.setVisible(false);
+
+	}
+
+	/**
+	 * This method checks to make sure that all fields have a value in them
+	 * before the Log is sent to main to be submitted.
+	 */
+	public boolean checkComplete() {
+
+		boolean retVal = true;
+
+		// if anything is not filled, set retVal to be false
+		if (office.getSelectedIndex() == 0) {
+			retVal = false;
+			if (!officeTextArea.getText().equals("")) {
+				retVal = true;
+			}
+		} else if (office.getSelectedIndex() == 4) {
+			if (officeTextArea.getText().equals("")) {
+				retVal = false;
+			}
+		} else if (timeReq.getSelectedIndex() == 0) {
+			retVal = false;
+		} else if (deadline.getSelectedIndex() == 0) {
+			retVal = false;
+		} else if (status.getSelectedIndex() == 0) {
+			retVal = false;
+		} else if (database.getSelectedIndex() == 0) {
+			retVal = false;
+		} else if (origReq.getText().equals("")) {
+			retVal = false;
+		}
+
+		return retVal;
+	}
+
+	/**
+	 * This method sets all of the labels that are not filled in by the user to
+	 * be the color RED
+	 */
+	public void setToError() {
+
+		// if anything is not filled, turn red and display error
+		if (office.getSelectedIndex() == 0 || office.getSelectedIndex() == 4) {
+			office.setForeground(Color.RED);
+		}
+		if (officeTextArea.getText().equals("")) {
+			officeLabelText.setForeground(Color.RED);
+		}
+		if (deadline.getSelectedIndex() == 0) {
+			deadline.setForeground(Color.RED);
+		}
+		if (status.getSelectedIndex() == 0) {
+			status.setForeground(Color.RED);
+		}
+		if (timeReq.getSelectedIndex() == 0) {
+			timeReq.setForeground(Color.RED);
+		}
+		if (database.getSelectedIndex() == 0) {
+			database.setForeground(Color.RED);
+		}
+		if (origReq.getText().equals("")) {
+			origRequestLabel.setForeground(Color.RED);
+		}
+
+		errorLabel.setVisible(true);
+
+	}
+
+	/**
+	 * This method is used to clear all of the fields after a log is submitted.
+	 * Will also reset labels.
+	 */
+	public void clear() {
+		prefillLog = null;
+		officeTextArea.setText("");
+		date.setValue(today);
+		today = new Date();
+		officeTextArea.setText("");
+		officeTextArea.setVisible(false);
+		officeLabelText.setVisible(false);
+		office.setVisible(true);
+
+		submit.setText("Submit");
+		resetErrorLabels();
+
+		office.setSelectedIndex(0);
+		timeReq.setSelectedIndex(0);
+		deadline.setSelectedIndex(0);
+		status.setSelectedIndex(0);
+		database.setSelectedIndex(0);
+		origReq.setText("");
+		needed.setText("");
+		solution.setText("");
+
+	}
+
+	/**
+	 * This method allows the "pop-out" tray to become visible to the user and
+	 * be used.
+	 */
+	public void toggleTrayOpen() {
+		closeTray.setVisible(true);
+		closeTray.setEnabled(true);
+		openTray.setVisible(false);
+		openTray.setEnabled(false);
+		main.setSize(725, 775);
+	}
+
+	/**
+	 * This method allows the "pop-out" tray to close.
+	 */
+	public void toggleTrayClosed() {
+		closeTray.setVisible(false);
+		closeTray.setEnabled(false);
+		openTray.setVisible(true);
+		openTray.setEnabled(true);
+		main.setSize(390, 775);
+	}
+
+	/**
+	 * This method checks to see if the fields are empty. If not, it asks the
+	 * user if they would still like to view the selected log.
+	 * 
+	 * @throws IOException
+	 */
+	public boolean checkDraft() throws IOException {
+
+		boolean retVal = true;
+
+		// if anything has something selected or typed in the log, set retVal to
+		// false
+		if (office.getSelectedIndex() != 0 && office.isVisible()) {
+			retVal = false;
+		} else if (officeTextArea.getText().equals("")
+				&& officeTextArea.isVisible()) {
+			retVal = false;
+		}
+		if (timeReq.getSelectedIndex() != 0) {
+			retVal = false;
+		}
+		if (deadline.getSelectedIndex() != 0) {
+			retVal = false;
+		}
+		if (status.getSelectedIndex() != 0) {
+			retVal = false;
+		}
+		if (database.getSelectedIndex() != 0) {
+			retVal = false;
+		}
+		if (!origReq.getText().equals("")) {
+			retVal = false;
+		}
+		if (!needed.getText().equals("")) {
+			retVal = false;
+		}
+		if (!solution.getText().equals("")) {
+			retVal = false;
+		}
+
+		// if something existed in the log, call setVisible
+		if (!retVal) {
+			setVisible();
+		}
+
+		return retVal;
+
+	}
+
+	/**
+	 * This method sets the error information to be invisible
+	 */
+	public void setInvisible() {
+		error2Label.setVisible(false);
+		errorYes.setEnabled(false);
+		errorCancel.setEnabled(false);
+	}
+
+	/**
+	 * This method is called by checkDraft if there are fields with values when
+	 * a log is selected. It sets the error information to be visible
+	 * 
+	 * @return
+	 * @throws IOException
+	 */
+	public void setVisible() throws IOException {
+		error2Label.setVisible(true);
+		errorYes.setEnabled(true);
+		errorCancel.setEnabled(true);
+	}
+
+	private PriorityQueue<Log> getPQ() {
+		PriorityQueue<Log> retVal = new PriorityQueue<Log>();
+		Database db = Database.getData();
+		LinkedList<Log> logs = db.getViewablePQ();
+		retVal.addAll(logs);
+		return retVal;
+	}
+
+	/**
+	 * Prefills the selected log into the fields.
+	 */
+	public void doPrefill() {
+
+		int index = logs.getSelectedIndex();
+		int current = 0;
+		PriorityQueue<Log> pq = getPQ();
+		Log log = null;
+
+		while (!pq.isEmpty()) {
+			Log l = pq.poll();
+			if (current == index) {
+				log = l;
+			}
+			current = current + 1;
+		}
+
+		if (log != null) {
+			prefillLog = log;
+			Date currentDate = log.getDate();
+			date.setValue(currentDate);
+			String or = log.getOrigReq();
+			origReq.setText(or);
+			String wn = log.getNeeded();
+			needed.setText(wn);
+			String sol = log.getSolution();
+			solution.setText(sol);
+			String databaseIn = log.getDatabase();
+			if (Arrays.asList(databaseStrings).contains(databaseIn)) {
+				database.setSelectedItem(databaseIn);
+			}
+			String officeIn = log.getOffice();
+			boolean contained = false;
+			for (int i = 0; i < officeStrings.length; i++) {
+				String currS = officeStrings[i];
+				if (currS.equals(officeIn)) {
+					contained = true;
+				}
+			}
+			if (contained) {
+				office.setVisible(true);
+				officeTextArea.setVisible(false);
+				office.setSelectedItem(officeIn);
+				officeLabelText.setVisible(false);
+			} else {
+				office.setVisible(false);
+				officeTextArea.setVisible(true);
+				officeTextArea.setText(officeIn);
+				officeLabelText.setVisible(true);
+			}
+			String currentDeadline = log.getDeadline();
+			String currentTimeReq = log.getTimeReq();
+			String currentStatus = log.getStatus();
+			if (Arrays.asList(statusStrings).contains(currentStatus)) {
+				status.setSelectedItem(currentStatus);
+			}
+			if (Arrays.asList(timeReqStrings).contains(currentTimeReq)) {
+				timeReq.setSelectedItem(currentTimeReq);
+			}
+			if (Arrays.asList(deadlineStrings).contains(currentDeadline)) {
+				deadline.setSelectedItem(currentDeadline);
+			}
+		}
+
+		submit.setText("Update");
+		setInvisible();
+	}
+
+	/**
+	 * does not prefill the selected log into the fields.
+	 */
+	public void doNotPrefill() {
+		setInvisible();
+	}
+
+	/**
+	 * This method will refresh the JList on the Tray with Logs that are stored
+	 * in the Database Class
+	 * 
+	 * @throws IOException
+	 */
+	public void refreshLogs() throws IOException {
+		dlm.removeAllElements();
+		Database data = Database.getData();
+		LinkedList<Log> pq = data.getViewablePQ();
+		Iterator<Log> it = pq.iterator();
+		int logIndex = 0;
+		PriorityQueue<Log> prior = new PriorityQueue<Log>();
+		Stack<Integer> stack = new Stack<Integer>();
+		while (it.hasNext()) {
+			Log currLog = it.next();
+			int id = currLog.getId();
+			if (!stack.contains(id)) {
+				prior.add(currLog);
+				stack.push(id);
+			}
+		}
+		while (!prior.isEmpty()) {
+			Log l = prior.poll();
+			String outString = "";
+			if (l.getStatus().equals("Complete")) {
+				outString = "Status: " + l.getStatus() + "       Office: "
+						+ l.getOffice();
+			} else {
+				outString = "Status: " + l.getStatus() + "    Office: "
+						+ l.getOffice();
+			}
+			dlm.add(logIndex, outString);
+			logIndex = logIndex + 1;
+		}
+		JList<String> newList = new JList<String>(dlm);
+	}
+
+	/**
+	 * This method is used to create a unique identifier for each log as well as
+	 * the log itself.
+	 * 
+	 * CALLS METHOD
+	 */
+	public Log logCreation() {
+
+		// instantiate the new log
+		Log newLog = new Log();
+		Settings s = Settings.getSettings();
+		int index = database.getSelectedIndex();
+		List<String> offices = s.getDatabases();
+		newLog.setDatabase(offices.get(index));
+		newLog.setDatabase(offices.get(database.getSelectedIndex()));
+		newLog.setDeadline(deadline.getSelectedItem().toString());
+
+		// depending on what field for offices is selected, set the office
+		// accordingly
+		if (office.getSelectedItem().toString().equals("Other")) {
+			newLog.setOffice(officeTextArea.getText());
+		} else {
+			newLog.setOffice(office.getSelectedItem().toString());
+		}
+
+		newLog.setStatus(status.getSelectedItem().toString());
+		newLog.setTimeReq(timeReq.getSelectedItem().toString());
+		newLog.setOrigReq(origReq.getText());
+		newLog.setNeeded(needed.getText());
+		newLog.setSolution(solution.getText());
+
+		// send it back to be sent to the database
+		return newLog;
+
+	}
+
+	/**
+	 * This method is used for any actions performed by the user and how to
+	 * handle them.
+	 */
+	@SuppressWarnings("unused")
+	@Override
+	public void actionPerformed(ActionEvent e) {
+		if (e.getSource().equals(submit)) {
+			submitLog();
+			doNotPrefill();
+		} else if (e.getSource().equals(openTray)) {
+			toggleTrayOpen();
+		} else if (e.getSource().equals(closeTray)) {
+			toggleTrayClosed();
+		} else if (e.getSource().equals(clear)) {
+			clear();
+		} else if (e.getSource().equals(errorYes)) {
+			doPrefill();
+		} else if (e.getSource().equals(errorCancel)) {
+			doNotPrefill();
+		} else if (e.getSource().equals(search)) {
+			Search siri = new Search();
+			if (refine.getText().equals("")
+					|| refine.getText().equals("Refine:")) {
+				return;
+			} else {
+				try {
+					siri.search(sortOption.getSelectedItem().toString(),
+							refine.getText());
+				} catch (ParseException e1) {
+					e1.printStackTrace();
+				}
+			}
+		} else if (e.getSource().equals(settingsCog)) {
+			SettingsGUI setttings = new SettingsGUI(this);
+		} else if (e.getSource().equals(refreshCog)) {
+			try {
+				Main.loadData();
+				refreshLogs();
+				doNotPrefill();
+			} catch (IOException e1) {
+				e1.printStackTrace();
+			}
+		}
+
+	}
+
+	@Override
+	public void mouseClicked(MouseEvent m) {
+		// not used
+
+	}
+
+	@Override
+	public void mouseEntered(MouseEvent arg0) {
+		// not used
+
+	}
+
+	@Override
+	public void mouseExited(MouseEvent arg0) {
+		// not used
+
+	}
+
+	@Override
+	public void mousePressed(MouseEvent arg0) {
+		//
+		refine.setText("");
+
+	}
+
+	@Override
+	public void mouseReleased(MouseEvent arg0) {
+		// not used
+
+	}
+
+	@Override
+	public void focusGained(FocusEvent arg0) {
+		refine.setText("");
+		
+	}
+
+	@Override
+	public void focusLost(FocusEvent arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+}

@@ -1,0 +1,39 @@
+For our application, the following classes do not need to be tested due to simplicity: 
+User
+Id
+Validation
+Main
+
+The remaining classes are as followed and will be tested in the order listed:
+Log
+Database
+Search
+DatabaseTransactions
+MainGUI
+TrayGUI
+
+The order for testing classes was determined based on their significance to the application 
+as a whole and the ability to test the classes independently. Log was chosen first because 
+it is essential to the entire program, but is relatively easy to test since it has few methods
+and is normally controlled by other classes. Database was chosen second because the maps of 
+Logs are critical to the program and are also easy to design tests around. Search and 
+Database Transactions are next because they are more difficult classes to write tests for. 
+These two classes determine how well the program is able to find the logs in the tray and get 
+and put files on the server. Therefore, the hardest to write tests will be in the middle of 
+the testing phase, after all other components for their functions are built and tested. Next 
+will come the two GUI classes, because those tests will be somewhat carried out by JUnits 
+but will be more heavily tested by actual run tests. Finally, Main will be tested last 
+because it is the class that ties all of the subclasses together and executes the application, 
+so it should be tested last. 
+
+The classes will be integrated into the whole program in a stepwise fashion. It will start by
+integrating Log, Database, and Database Transactions. Then, once that is complete, Search can 
+be added in. Then, the GUI will be added. Both GUI classes should be able to be added at the 
+same time. Finally, the Main class can be added in, which will run the entire program and tie 
+the application together.
+
+The whole program, after being tested independently of JUnits, will be tested through a 
+variety of hand drawn tests and actual run tests. We will use a testing directory on the 
+server and test nearly all situations that can be thought of. This combination of tests 
+should be sufficient to check the program before it is considered complete.
+

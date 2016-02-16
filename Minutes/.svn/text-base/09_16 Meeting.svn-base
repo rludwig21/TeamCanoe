@@ -1,0 +1,54 @@
+Meeting 1 held on 9/16/2014 at 10:30a.m.
+Librarian: Andrew Ludwig
+
+1. Present: Robert Lee, Sean Wagner, Oliver, Andrew Ludwig
+
+ACTION ITEMS DUE:
+1) All members were asked to review the project overview and come up with ideas and thoughts.
+	-all members completed this task below is the questions and brainstorming ideas.
+
+   Project Questions and general overview/ideas summary...
+
+Questions for Clients:
+	Q: what other applications will be accessing these logs for analyze??
+
+	Q: Are permissions Important? If so what levels are there? aslo:Should this be Application be available outside of the college?
+
+	Q: How many Databases are there? Are there specifics?
+
+	Q: Where is the Database held? Server, cloud, etc. 
+		A-> housed on a central server which we have access to.
+
+	Q: Program to be held on Web(Portal Style) or individual PC application? Do you have a vision of what you want the layout to look like?
+
+	Q: Do you do a month end print out or such other processes you would like to incorporate?
+
+	Q: Can we see an example of a few of the reports? Do you have templates?
+
+	Q: Do you currently use a file format for anything?
+
+	Q: Do you want just a log or do you want more?
+
+  -we could take a trip to the office and ask some of those who work in the office if they have any input.
+  
+Brain-stormed Ideas:
+-ticket based system (think IT help ticket style)
+-some fields should be locked for office use only
+-can we possible use the Canisius system for logins?
+-MySQL and XML(recommended but not what we must use, good idea)
+-Trash function? there logs would we even need this?
+-Merge Function? - could be very difficult..
+- how should we allow multiple people to work on requests?
+		->could use a lock on each request? (TRUE /FALSE if locked?)
+		->need to allow multiple requests to be submitted to database as well
+		
+
+GUI: NOTE>>> THE UI MUST BE ABLE TO BE CHANGED EASILY WITHOUT MODIFICATION TO PROGRAM
+tabs for databases?
+... need questions answered & a better understanding of what the customer needs...
+
+HELP PAGES: 
+-we need to document how to use the program( lame man terms)
+   
+ACTION ITEMS for NEXT meeting is on Tuesday at 10:30am in Lab (possible trip to Matthews office!):
+All Members-> Prepare for next meeting by coming up with more questions or ideas prior to asking the client.

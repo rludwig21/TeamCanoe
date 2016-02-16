@@ -1,0 +1,19 @@
+Meeting held on 10/23/2014 at 9:00a.m.
+Librarian: Andrew Ludwig
+Attendence: Rob, Andrew, Oliver, Sean
+
+ACTION ITEMS DUE:
+
+Minutes:
+-reviewed classes 
+-added and organized classes to simplify
+-deciding how to pull from database (pull from start of program or pull during)
+-must factor in the way we get data from the database
+-We know when we send to the database we know it will be converted to XML
+-need to handle updating or local cache (need outline)
+-Priority Queue with complete vs uncompleted (we need one that sorts it right)
+-date range?
+
+NEW ACTION ITEMS:
+- outline how local database cache cycles
+- review method names and java doc

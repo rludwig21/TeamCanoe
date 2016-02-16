@@ -1,0 +1,34 @@
+10
+
+dir
+243
+svn+ssh://megahertz.canisius.edu/home/svn/classes/csc395f14/TeamCanoe/sampleGUIs
+svn+ssh://megahertz.canisius.edu/home/svn/classes/csc395f14/TeamCanoe
+
+
+
+2014-10-16T01:52:46.013580Z
+40
+ee27
+
+
+svn:special svn:externals svn:needs-lock
+
+
+
+
+
+
+
+
+
+
+
+47012ac9-1b2b-4a05-a785-02019d282e42
+
+gui
+dir
+
+gui2
+dir
+

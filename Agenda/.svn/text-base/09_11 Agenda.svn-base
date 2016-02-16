@@ -1,0 +1,13 @@
+Date: Sept. 11, 2014
+Prepared By: Matthew Hertz 
+
+Agenda: 
+1. Start meeting and take attendance
+2. Review progress on members' outstanding action items
+3. Have all team members checkout the project within Eclipse
+    a) Report any errors to the Project Manager so that he can fix their accounts
+4. Review how to "Update" a project to get the latest versions in the repository
+5. Modify a file and "Commit" the project to save the changes to the repository.
+6. "Show History" of the project to see how you can identify who changed what and when
+7. Develop initial policies about commit messages and handling conflicts (when 2 people try modifying the same line in a text file or any change to a non-text file)
+8. Review sample paperwork for the project and start formulating questions 

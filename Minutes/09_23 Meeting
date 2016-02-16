@@ -1,0 +1,24 @@
+Librarian: Andrew Ludwig
+
+ATTENDANCE
+Present: Robert Lee, Sean Wagner, Oliver, Andrew Ludwig
+
+ACTION ITEMS DUE: Any extra questions for client.
+	-All Members Completed
+MINUTES:
+  -Second Meeting with Matthew and showed our initial idea of a ticket based system.
+  -learned that the customer really wants a quick process of logging.
+  -wants GUI to pop up ready to log right away
+  -Doesn't like MS Outlook style at all -> this will make for a good user story
+  -Wants a keyboard type flow... aka Doesn't want to touch the mouse.
+  -User Authentication is not all that important at all
+  -Wants GUI to be easy to learn -> eliminate the need to use the HELP pages!
+  -No MYSQL
+  -Must use XML and JAVA!
+  -pretty much summing up this meeting we learned that we should've brought a GUI with pictures to show the client look at the action items below
+   so that for next meeting we are prepared.
+  
+NEW ACTION ITEMS Due for next meeting at Tuesday 10:30:
+
+All Members- GUI ideas and bring a drawing or two
+All Members- User Stories

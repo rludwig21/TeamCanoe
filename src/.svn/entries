@@ -1,0 +1,40 @@
+10
+
+dir
+243
+svn+ssh://megahertz.canisius.edu/home/svn/classes/csc395f14/TeamCanoe/src
+svn+ssh://megahertz.canisius.edu/home/svn/classes/csc395f14/TeamCanoe
+
+
+
+2014-12-11T23:55:43.160470Z
+243
+ludwig2
+
+
+svn:special svn:externals svn:needs-lock
+
+
+
+
+
+
+
+
+
+
+
+47012ac9-1b2b-4a05-a785-02019d282e42
+
+GUI
+dir
+
+RequestLogger
+dir
+
+org
+dir
+
+testing
+dir
+

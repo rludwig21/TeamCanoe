@@ -1,0 +1,33 @@
+Meeting held on 10/16/2014 at 9:00a.m.
+Librarian: Andrew Ludwig
+Attendence: Andrew, Oliver, Sean
+excused absence: Rob
+
+ACTION ITEMS DUE:
+Review New Required Documentation
+
+MINUTES:
+-Hertz let us know that e got a little bit into Design Phase of the Project... 
+-how to balance roles.
+-broke up into two group roles for GUI and PDS (see below)
+-summary and authorship to completed in a later meeting.
+-NOTE:Oliver will not be here on the 28th but will be here the 30th
+-TBD UML state diagrams
+-DataDictionary is partially set up
+-looked at sample GUIs didn't run?
+
+
+ACTION ITEMS:
+Problem Domain subsystem:
+Sean & Andrew
+Sean- UML class Diagram for PDS
+
+
+GUI Subsystem:
+oliver & Rob
+oliver -update State diagram
+
+Other:
+Andrew- look at State Diagrams for the PDS
+Rob- DataDictionary
+All members- should write 2 User stories for the GUI
